@@ -3,6 +3,8 @@ const routerApi = require('./routes');
 const app = express();
 const port = 8000; // --> Defino el puerto donde va a correr.
 
+app.use(express.json());
+
 // --> GET básico con un request y response.
 app.get('/', (req, res) => {
   res.send('Hello word!');
