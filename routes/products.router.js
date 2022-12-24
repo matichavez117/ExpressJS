@@ -4,8 +4,8 @@ const ProductsService = require('./../services/product.service');
 const service = new ProductsService();
 
 // --> ruta localhost:8000/product (devuelve un JSON).
-router.get('/', (req, res) => {
-  const products = service.find();
+router.get('/', async (req, res) => {
+  const products = await service.find();
   res.json(products);
 });
 
@@ -15,11 +15,16 @@ router.get('/', (req, res) => {
 */
 
 // --> ruta que devuelve un producto por id, aca podemos notar el uso de "req.params"
-router.get('/:id', (req, res) => {
-  const { id } = req.params;
-  //const id = req.params.id;
-  const product = service.findOne(id);
-  res.json(product);
+// --> Aqui tambien estamos aplicando los middlewares de tipo error
+router.get('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    //const id = req.params.id;
+    const product = await service.findOne(id);
+    res.json(product);
+  } catch (error) {
+    next(error)
+  };
 });
 
 // --> De esta manera podemos manejar los STATUS que nos va a devolver el response res.status(codigo).json()
@@ -50,16 +55,14 @@ router.post('/', (req, res) => {
 // --> patch se utiliza para actualizar elementos parcialmente y put para actualizarlos completos, es decir,
 // --> hay que pasarle todos los parametros completos.
 // --> Tambien podemos ver como manejar errar con un try catch si nuestro update que esta en service es asincrono
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
     const body = req.body;
     const product = await service.update(id, body);
     res.json(product);
   } catch (err) {
-    res.status(404).json({
-      message: err.message,
-    });
+    next(err);
   };
 });
 
