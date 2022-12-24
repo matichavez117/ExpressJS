@@ -3,6 +3,7 @@ const routerApi = require('./routes');
 const app = express();
 const port = 8000; // --> Defino el puerto donde va a correr.
 
+// --> Esto es para poder recibir informacion tipo json que nos envien por post
 app.use(express.json());
 
 // --> GET básico con un request y response.
